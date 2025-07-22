@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NightInk</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 15px;
+      min-width: 230px;
+      color: white;
+      background-color: #111;
+    }
+
+    h1 {
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    .power-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #0f8c2c; /* ✅ GREEN when OFF */
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .power-btn:hover {
+      background-color: #0c6e23; /* darker green when hovered */
+    }
+
+    .power-btn.active {
+      background-color: #333; /* ✅ GRAY when ON */
+    }
+
+    .power-btn.active:hover {
+      background-color: #444; /* darker gray when hovered */
+    }
+
+    #controls {
+      display: none;
+      margin-top: 10px;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0 3px;
+      font-size: 13px;
+    }
+
+    select,
+    input[type="range"] {
+      width: 100%;
+      margin-top: 3px;
+    }
+
+    #strengthWrapper {
+      display: block;
+    }
+
+    #offMsg {
+      color: #aaa;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>NightInk</h1>
+
+  <button id="powerBtn" class="power-btn">Enable NightInk</button>
+  <div id="offMsg">NightInk is OFF</div>
+
+  <div id="controls">
+    <label for="themeSelect">Theme:</label>
+    <select id="themeSelect">
+      <option value="dark">Dark</option>
+      <option value="sepia">Sepia</option>
+      <option value="warm">Warm</option>
+    </select>
+
+    <label for="brightnessSlider">Brightness:</label>
+    <input type="range" id="brightnessSlider" min="50" max="100" value="100" />
+
+    <div id="strengthWrapper">
+      <label for="strengthSlider">Theme Strength:</label>
+      <input type="range" id="strengthSlider" min="0" max="100" value="100" />
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

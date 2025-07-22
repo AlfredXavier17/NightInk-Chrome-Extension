@@ -1,0 +1,15 @@
+Short Description:
+Night mode for PDF files. Apply Dark, Sepia, or Warm filters for comfortable reading without hurting your eyes.
+
+Long Description:
+Tired of burning your eyes reading PDFs at night?
+
+NightInk is a simple Chrome extension that adds night mode themes to any PDF file. Whether you're reading textbooks, research papers, or boring manuals — NightInk gives you control.
+
+✨ Features:
+• Dark, Sepia, and Warm filters
+• Adjustable brightness and theme strength
+• Automatically runs only on PDF pages
+• Clean interface — no tracking, no ads, no fluff
+
+Get NightInk and read comfortably — day or night.
