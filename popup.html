@@ -20,7 +20,7 @@
     .power-btn {
       width: 100%;
       padding: 10px;
-      background-color: #0f8c2c; /* ✅ GREEN when OFF */
+      background-color: #0f8c2c; /* GREEN when OFF */
       color: white;
       border: none;
       border-radius: 6px;
@@ -32,15 +32,15 @@
     }
 
     .power-btn:hover {
-      background-color: #0c6e23; /* darker green when hovered */
+      background-color: #0c6e23;
     }
 
     .power-btn.active {
-      background-color: #333; /* ✅ GRAY when ON */
+      background-color: #333; /* GRAY when ON */
     }
 
     .power-btn.active:hover {
-      background-color: #444; /* darker gray when hovered */
+      background-color: #444;
     }
 
     #controls {
@@ -70,8 +70,26 @@
       text-align: center;
       margin-top: 10px;
     }
+
+    #openViewerBtn {
+      margin-top: 12px;
+      width: 100%;
+      padding: 10px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    #openViewerBtn:hover {
+      background-color: #555;
+    }
   </style>
 </head>
+
 <body>
   <h1>NightInk</h1>
 
@@ -94,6 +112,8 @@
       <input type="range" id="strengthSlider" min="0" max="100" value="100" />
     </div>
   </div>
+
+  <button id="openViewerBtn">Open in NightInk Viewer</button>
 
   <script src="popup.js"></script>
 </body>

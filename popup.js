@@ -5,6 +5,7 @@ const strengthSlider = document.getElementById("strengthSlider");
 const controlsDiv = document.getElementById("controls");
 const offMsg = document.getElementById("offMsg");
 const strengthWrapper = document.getElementById("strengthWrapper");
+const openViewerBtn = document.getElementById("openViewerBtn");
 
 // 🔁 Update popup UI
 function updateUI(enabled) {
@@ -21,27 +22,27 @@ function updateUI(enabled) {
   }
 }
 
-// 👁️ Toggle visibility of Theme Strength based on theme
+// 👁️ Toggle Theme Strength only for sepia/warm
 function updateStrengthVisibility() {
   const selected = themeSelect.value;
-  if (selected === "dark") {
-    strengthWrapper.style.display = "none";
-  } else {
-    strengthWrapper.style.display = "block";
-  }
+  strengthWrapper.style.display = selected === "dark" ? "none" : "block";
 }
 
-// ✅ Load settings and apply to UI
-chrome.storage.local.get(["nightModeEnabled", "selectedTheme", "brightness", "themeStrength"], (result) => {
-  const enabled = result.nightModeEnabled ?? false;
-  themeSelect.value = result.selectedTheme ?? "dark";
-  brightnessSlider.value = result.brightness ?? 100;
-  strengthSlider.value = result.themeStrength ?? 100;
-  updateUI(enabled);
-  updateStrengthVisibility();
-});
+// ✅ Load saved settings into popup
+chrome.storage.local.get(
+  ["nightModeEnabled", "selectedTheme", "brightness", "themeStrength"],
+  (result) => {
+    const enabled = result.nightModeEnabled ?? false;
+    themeSelect.value = result.selectedTheme ?? "dark";
+    brightnessSlider.value = result.brightness ?? 100;
+    strengthSlider.value = result.themeStrength ?? 100;
 
-// 🔘 Toggle extension ON/OFF
+    updateUI(enabled);
+    updateStrengthVisibility();
+  }
+);
+
+// 🔘 Toggle ON/OFF
 powerBtn.addEventListener("click", () => {
   const enabled = !powerBtn.classList.contains("active");
   chrome.storage.local.set({ nightModeEnabled: enabled }, () => {
@@ -50,7 +51,7 @@ powerBtn.addEventListener("click", () => {
   });
 });
 
-// 🎨 Theme select
+// 🎨 Theme change
 themeSelect.addEventListener("change", () => {
   chrome.storage.local.set({ selectedTheme: themeSelect.value }, () => {
     updateStrengthVisibility();
@@ -63,25 +64,53 @@ brightnessSlider.addEventListener("input", () => {
   chrome.storage.local.set({ brightness: brightnessSlider.value }, sendUpdate);
 });
 
-// 🎛️ Theme Strength slider
+// 🎛️ Strength slider
 strengthSlider.addEventListener("input", () => {
   chrome.storage.local.set({ themeStrength: strengthSlider.value }, sendUpdate);
 });
 
-// 🔄 Communicate with content script
+// 🔄 Send update to content script OR viewer
 function sendUpdate() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (!tabs[0]) return;
+    const tab = tabs[0];
+    if (!tab) return;
 
-    chrome.storage.local.get(["nightModeEnabled", "selectedTheme", "brightness", "themeStrength"], (result) => {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        nightModeEnabled: result.nightModeEnabled,
-        selectedTheme: result.selectedTheme,
-        brightness: result.brightness,
-        themeStrength: result.themeStrength
-      }).catch((err) => {
-        // No content script found — not a PDF page — ignore
-      });
-    });
+    chrome.storage.local.get(
+      ["nightModeEnabled", "selectedTheme", "brightness", "themeStrength"],
+      (result) => {
+        const msg = {
+          nightModeEnabled: result.nightModeEnabled,
+          selectedTheme: result.selectedTheme,
+          brightness: result.brightness,
+          themeStrength: result.themeStrength
+        };
+
+        const isViewer = tab.url.startsWith(
+          `chrome-extension://${chrome.runtime.id}/viewer/web/`
+        );
+
+        if (isViewer) {
+          chrome.runtime.sendMessage(msg);
+        } else {
+          chrome.tabs.sendMessage(tab.id, msg).catch(() => {});
+        }
+      }
+    );
   });
 }
+
+// 📄 OPEN PDF IN FULL PDF.js VIEWER
+openViewerBtn.addEventListener("click", () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tab = tabs[0];
+    if (!tab || !tab.url) return;
+
+    const pdfUrl = tab.url;
+
+    const viewerUrl = chrome.runtime.getURL(
+      `viewer/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`
+    );
+
+    chrome.tabs.create({ url: viewerUrl });
+  });
+});
